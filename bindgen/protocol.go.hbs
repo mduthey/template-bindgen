@@ -1,0 +1,84 @@
+// This file is auto-generated.
+
+package protocol
+
+import (
+	"tx3sdk/trp"
+)
+
+const DefaultTRPEndpoint = "{{trpEndpoint}}"
+
+var DefaultHeaders = map[string]string{
+{{#each headers}}
+	"{{@key}}": "{{this}}",
+{{/each}}
+}
+
+var DefaultEnvArgs = map[string]string{
+{{#each envArgs}}
+	"{{@key}}": "{{this}}",
+{{/each}}
+}
+
+{{#each transactions}}
+// {{pascalCase params_name}} defines the parameters for the {{pascalCase name}} transaction
+type {{pascalCase params_name}} struct {
+{{#each parameters}}
+	{{pascalCase name}} {{type_name}} `json:"{{pascalCase name}}"`
+{{/each}}
+}
+
+// {{constantCase constant_name}} contains the TIR bytecode for the {{pascalCase name}} transaction
+var {{constantCase constant_name}} = trp.TirInfo{
+	Bytecode: "{{ir_bytes}}",
+	Encoding: "hex",
+	Version:  "v1alpha1",
+}
+
+{{/each}}
+// Client provides methods to interact with the tx3 protocol
+type Client struct {
+	client *trp.Client
+}
+
+// NewClient creates a new Client with the given options
+func NewClient(options trp.ClientOptions) *Client {
+	return &Client{
+		client: trp.NewClient(options),
+	}
+}
+
+// NewClientWithDefaults creates a new Client with default options
+func NewClientWithDefaults() *Client {
+	options := trp.ClientOptions{
+		Endpoint: DefaultTRPEndpoint,
+		Headers:  DefaultHeaders,
+		EnvArgs:  make(map[string]interface{}),
+	}
+
+	// Convert string env args to interface{}
+	for k, v := range DefaultEnvArgs {
+		options.EnvArgs[k] = v
+	}
+
+	return NewClient(options)
+}
+
+{{#each transactions}}
+// {{pascalCase function_name}} resolves the {{pascalCase name}} transaction with the given parameters
+func (c *Client) {{pascalCase function_name}}(args {{pascalCase params_name}}) (*trp.TxEnvelope, error) {
+	return c.client.Resolve(trp.ProtoTxRequest{
+		Tir:  {{constantCase constant_name}},
+		Args: args,
+	})
+}
+{{/each}}
+
+
+// Instance of the singleton client
+var DefaultClient *Client
+
+// init function runs automatically when the package is imported
+func init() {
+	DefaultClient = NewClientWithDefaults()
+}
