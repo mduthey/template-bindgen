@@ -45,13 +45,6 @@ export class Client {
         });
     }
     {{/each}}
-
-    async transferTx(args: TransferParams): Promise<TxEnvelope> {
-        return await this.#client.resolve({
-            tir: TRANSFER_IR,
-            args,
-        });
-    }
 }
 
 // Create a default client instance
