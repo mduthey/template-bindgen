@@ -19,7 +19,7 @@ export const DEFAULT_ENV_ARGS = {
 {{#each transactions}}
 export type {{pascalCase params_name}} = {
 {{#each parameters}}
-    {{camelCase name}}: {{type_name}};
+    {{name}}: {{type_name}};
 {{/each}}
 }
 
