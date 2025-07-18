@@ -1,0 +1,5 @@
+include = [
+  { name = "options.output", value = "typescript", paths = ["typescript/"] },
+  { name = "options.output", value = "javascript", paths = ["javascript/"] },
+  { name = "options.output", value = "react-router", paths = ["react-router/"] },
+]
